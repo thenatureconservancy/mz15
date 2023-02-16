@@ -16,7 +16,7 @@ All outputs on this page generated with the most recent LANDFIRE [Existing Veget
 
 ## Chart of most prevalent Existing Vegetation Types
 
-```{r evt chart, echo=FALSE, message=FALSE, warning=FALSE, fig.width=10, fig.height=8}
+```{r evt chart, echo=FALSE, message=FALSE, warning=FALSE, fig.width=10, fig.height=10}
 evtname <- read.csv(file = "data/evt_aoi_attributes.csv") %>%
   group_by(EVT_NAME) %>%
   summarize(ACRES = sum(ACRES),
@@ -48,7 +48,7 @@ evtChart
 
 <br>
 
-![](images/evt_map.jpg){width=100%}
+![](images/evt.jpg){width=100%}
 
 <br>
 
@@ -137,7 +137,7 @@ evcChart
 
 ## Map of Existing Vegetation Cover
 
-![](images/evc_map.jpg){width=100%}
+![](images/evc.jpg){width=100%}
 
 ## Chart of Existing Vegetation Height
 
@@ -218,6 +218,6 @@ evhChart
 
 ## Map of Existing Vegetation Height
 
-![](images/evh_map.jpg){width=100%}
+![](images/evh.jpg){width=100%}
 
 

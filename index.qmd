@@ -10,7 +10,7 @@ In general we will use [LANDFIRE](https://landfire.gov/) products to:
 1. Map and summarize past and present ecosystems and ecosystem conditions
 2. Explore historical disturbance regimes
 3. Summarize patterns of change and management opportunities
-4. Present maps of landscape-scale connectivity and resilient sites
+
 
 Outputs presented here are the tip of the iceberg of what can be done with these datasets and are intended to help begin brainstorming about appropriate questions that could be explored collaboratively.
 

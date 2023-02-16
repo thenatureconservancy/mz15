@@ -34,24 +34,28 @@ chord_df<- read_csv("data/bps2evt_chord.csv")
 matrix_df <-as.matrix(as_adjacency_matrix(as_tbl_graph(chord_df),attr = "ACRES"))
 
 #clean up matrix (could be cleaner!)
-matrix_df = subset(matrix_df, select = -c(1:4))
+matrix_df = subset(matrix_df, select = -c(1:6))
 
-matrix_df <- matrix_df[-c(5:11),]
+matrix_df <- matrix_df[-c(7:15),]
 
 #make a custom color pallet #eb4034 (redish) #b0af9e(grey)
 
 # ORIGINAL
-groupColors <-c( "#1d4220", # conifer OK
-                 "#56bf5f", # hardwood OK
-                 "#397d3f", # hardwood-conifer OK
-                 "#7db7c7", # riparian OK
+groupColors <-c( "#1d4220", # conifer 
+                 "#fc9d03", # grassland
+                 "#56bf5f", # hardwood
+                 "#397d3f", # hardwood-conifer 
+                 "#7db7c7", # riparian 
+                 "#6e4f1e", # shrubland
                  "#f5e942", # cur ag
                  "#1d4220", # cur conifer
                  "#397d3f", # cur hdw-con
                  "#b0af9e", # developed
                  "#eb4034", # exotics
-                 "#56bf5f",
-                 "#7db7c7"
+                 "#fc9d03", # grassland
+                 "#56bf5f", # hardwood
+                 "#7db7c7",
+                 "#6e4f1e"# shrubland
                  
 
 )
@@ -151,8 +155,3 @@ sclasplot
 ```
 
 
-## Canopy cover and pyrophic sites: Focus on NE Monongahela
-
-In the chart below LANDFIRE Existing Vegetation Cover was clipped to pyrophilic sites, "fire_score" values 1 and 2 (data by Melissa Thomas-Van Gundy and Greg Nowacki, provided by Thomas-Van Gundy.)  Cover data was classified and presented over a grey background for clarity.  There were no 0-30% canopy cover pixels found in mapped area.  
-
-![](images/pyro_evc.jpg){width=100%}

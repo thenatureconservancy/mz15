@@ -16,8 +16,6 @@ website:
         text: Present
       - href: comparing.qmd
         text: Comparing
-      - href: sclasses.qmd
-        text: S-Classes
       - href: about.qmd
         text: About
 
