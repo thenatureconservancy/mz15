@@ -16,6 +16,10 @@ website:
         text: Present
       - href: comparing.qmd
         text: Comparing
+      - href: pipo.html
+        text: PIPO
+      - href: pj.html
+        text: PJ
       - href: about.qmd
         text: About
 

@@ -1,0 +1,150 @@
+---
+title: "Madrean Pinyon-Juniper Woodland"
+---
+
+
+## Existing Vegetation Cover
+ 
+```{r pipo evc, echo=FALSE, message=FALSE, warning=FALSE, fig.width=10, fig.height=9}
+
+
+library(RColorBrewer)
+library(scales)
+library(tidyverse)
+
+# create "type" column based on conditions
+evcname <- read.csv("data/pj_evc.csv") %>% 
+  mutate(type = if_else(VALUE %in% 11, "Open Water",
+                                             if_else(VALUE %in% 12, "Snow / Ice",
+                                                     if_else(VALUE %in% c(13:25), "Developed",
+                                                             if_else(VALUE %in% 31, "Barren",
+                                                                     if_else(VALUE %in% c(60:70), "Agriculture",
+                                                                             if_else(VALUE %in% 32, "Quarries",
+                                                                                     if_else(VALUE %in% 100, "Sparse Vegetation",
+                                                                                             if_else(VALUE %in% c(101:199), "Tree",
+                                                                                                     if_else(VALUE %in% c(201:299), "Shrub",
+                                                                                                             if_else(VALUE %in% c(301:399), "Herb",
+                                                                                                                     "Other")))))))))))
+
+
+
+# create reverse substr() function
+revSubstr <- function(x, start, stop) {
+  x <- strsplit(x, "")
+  sapply(x, 
+         function(x) paste(rev(rev(x)[start:stop]), collapse = ""), 
+         USE.NAMES = FALSE)  }
+
+# create cover column based on 2nd and 3rd to last values of classname
+# if "Other" type, make 0
+evcname <- evcname %>% mutate(cover = as.numeric(if_else(VALUE > 100,
+                                                         revSubstr(evcname$CLASSNAMES, start = 2, stop = 3),
+                                                         "0")))
+
+# create bin breaks for grouping
+breaks <- seq(0, 100, 10)
+# create intervals for grouping and summarize
+# also create factor order for "type"
+evcgroup <- evcname %>%
+  mutate(interval = cut(cover,
+                        breaks, 
+                        include.lowest = TRUE, 
+                        right = T,
+                        labels = c("0-9", "10-19", "20-29", "30-39", "40-49", "50-59", "60-69", "70-79", 
+                                   "80-89", "90-100")),
+         type = factor(type, levels = c("Tree", "Shrub", "Herb", "Open Water", "Snow / Ice", "Developed", "Agriculture", "Sparse Vegetation", "Barren", "Quarries", "Other"))) %>%
+  group_by(type, interval) %>%
+  summarize(COUNT = sum(Freq),
+            acres = sum(ACRES),
+            rel_percent = sum(REL_PERCENT))
+
+# add label and legend names based on condition
+evcgroup <- evcgroup %>% mutate(label = if_else(type %in% c("Tree", "Shrub", "Herb"),
+                                                paste0(type, " Cover = ", interval, "%"), as.character(type)),
+                                legend = if_else(type %in% c("Tree", "Shrub", "Herb", "Open Water"),
+                                                 type, as.factor("Other")))
+
+# turn current label order to factors
+evclabel.list <- evcgroup$label
+evcgroup <- evcgroup %>% mutate(label = fct_rev(factor(label, evclabel.list)))
+
+# create factor level colors for legend
+cols <- c("Tree" = "#196F3D", "Shrub" = "#229954", "Herb" = "#52BE80", "Open Water" = "#7FB3D5",
+          "Other" = "#808B96")
+
+# plot
+evcChart <-
+  ggplot(data = evcgroup, aes(x = label, y = rel_percent, fill = legend)) +
+  geom_bar(stat = "identity") +
+  labs(
+    title = "Existing Vegetation Cover",
+    subtitle = "Madrean Pinyon-Juniper Woodland",
+    caption = "\nData from landfire.gov.",
+    x = "",
+    y = "Percent of landscape") +
+  scale_fill_manual(values = cols, name = "") +
+  coord_flip() +
+  theme_bw()
+
+evcChart
+
+```
+ 
+## What has been converted to PJ?
+
+Many BpSs have contributed to what is now mapped as Madrean Pinyon-Juniper Woodland, I only present the top 10 as they represent > 90% of what has changed from the BpS map to the EVT map.   To read hover over bars on the left.  For example, 29% of what is mapped as Madrean Pinyon-Juniper Woodland in the EVT dataset was mapped as "Mogollon Chparral" in the BpS dataset.  
+
+
+```{r pj sankey, echo=FALSE, message=FALSE, warning=FALSE, include=FALSE}
+library(networkD3)
+library(dplyr)
+library(readr)
+
+
+
+# read in snkyPdata
+snkyPdata <- read_csv("data/pj_sankey.csv")
+
+# define nodes
+nodes <- data.frame(
+         name=c(as.character(snkyPdata$source), 
+         as.character(snkyPdata$target)) %>% 
+          unique())
+
+# add source and target fields
+snkyPdata$IDsource <- match(snkyPdata$source, nodes$name)-1 
+snkyPdata$IDtarget <- match(snkyPdata$target, nodes$name)-1
+
+# Make the Network
+snkyP2 <- sankeyNetwork(Links = snkyPdata, 
+                       Nodes = nodes,
+                       Source = "IDsource", 
+                       Target = "IDtarget",
+                       Value = "value", 
+                       NodeID = "name", 
+                       width = 800,
+                       height = 600, 
+                       fontSize=14,
+                       iterations = 0,
+                       sinksRight=FALSE,
+                       margin = 1)
+
+snkyP2
+
+htmlwidgets::saveWidget(snkyP2,
+                        "pj_sankey.html",
+                        background = "white",
+                        selfcontained = TRUE
+                        )
+
+
+```
+
+
+<iframe src="pj_sankey.html" height="720" width="800" style="border: 1px solid #464646;" allowfullscreen="" allow="autoplay" data-external=".5"></iframe>
+
+
+## PJ Map
+
+
+![](images/pj_evt.jpg){width=100%}
